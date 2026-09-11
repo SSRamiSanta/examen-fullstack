@@ -1,4 +1,4 @@
-import { PocketUpdatedEvent } from '@examen-fullstack/shared';
+import { PocketUpdatedEvent, SecureEnvelope } from '@examen-fullstack/shared';
 
 type EventListener = (event: PocketUpdatedEvent) => void;
 
@@ -29,9 +29,13 @@ export class WebSocketService {
 
       this.socket.onmessage = (event) => {
         try {
-          const parsed = JSON.parse(event.data) as PocketUpdatedEvent;
-          if (parsed && parsed.event === 'POCKET_UPDATED') {
-            this.listeners.forEach((listener) => listener(parsed));
+          const raw = JSON.parse(event.data) as PocketUpdatedEvent | SecureEnvelope<PocketUpdatedEvent>;
+          const pocketEvent = (raw && 'payload' in raw && raw.payload)
+            ? raw.payload
+            : (raw as PocketUpdatedEvent);
+
+          if (pocketEvent && pocketEvent.event === 'POCKET_UPDATED') {
+            this.listeners.forEach((listener) => listener(pocketEvent));
           }
         } catch {
           // Ignorar mensajes no conformes
