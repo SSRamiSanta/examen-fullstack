@@ -1,19 +1,61 @@
 import { Request, Response, NextFunction } from 'express';
 
-interface CachedResponse {
+export interface CachedResponse {
   statusCode: number;
   body: unknown;
+  expiresAt: number;
 }
 
 export class IdempotencyStore {
   private readonly cache: Map<string, CachedResponse> = new Map();
 
+  constructor(
+    private readonly ttlMs: number = 24 * 60 * 60 * 1000, // 24 horas por defecto
+    private readonly maxCapacity: number = 10000
+  ) {}
+
   public get(key: string): CachedResponse | undefined {
-    return this.cache.get(key);
+    const cached = this.cache.get(key);
+    if (!cached) {
+      return undefined;
+    }
+
+    if (Date.now() > cached.expiresAt) {
+      this.cache.delete(key);
+      return undefined;
+    }
+
+    return cached;
   }
 
-  public set(key: string, response: CachedResponse): void {
-    this.cache.set(key, response);
+  public set(key: string, response: Omit<CachedResponse, 'expiresAt'>): void {
+    this.pruneExpired();
+
+    // Si aún excede la capacidad máxima tras podar expirados, expulsar la entrada más antigua (FIFO/LRU simple)
+    if (this.cache.size >= this.maxCapacity) {
+      const oldestKey = this.cache.keys().next().value;
+      if (oldestKey) {
+        this.cache.delete(oldestKey);
+      }
+    }
+
+    this.cache.set(key, {
+      ...response,
+      expiresAt: Date.now() + this.ttlMs,
+    });
+  }
+
+  public pruneExpired(): void {
+    const now = Date.now();
+    for (const [key, val] of this.cache.entries()) {
+      if (now > val.expiresAt) {
+        this.cache.delete(key);
+      }
+    }
+  }
+
+  public size(): number {
+    return this.cache.size;
   }
 
   public clear(): void {

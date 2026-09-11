@@ -4,7 +4,12 @@ import {
   CreatePocketUseCase,
   DepositFundsUseCase,
 } from '../../../application';
-import { InvalidAmountException, InvalidPocketNameException } from '@examen-fullstack/core';
+import {
+  InvalidAmountException,
+  InvalidPocketNameException,
+  sanitizeString,
+  isPositiveFiniteNumber,
+} from '@examen-fullstack/core';
 
 export class PocketController {
   constructor(
@@ -34,17 +39,22 @@ export class PocketController {
     try {
       const { name, targetAmount } = req.body ?? {};
 
-      if (typeof name !== 'string' || name.trim().length < 3) {
-        throw new InvalidPocketNameException('El nombre debe tener al menos 3 caracteres.');
+      const sanitizedName = sanitizeString(typeof name === 'string' ? name : '');
+      if (sanitizedName.length < 3) {
+        throw new InvalidPocketNameException(
+          'El nombre del bolsillo debe contener al menos 3 caracteres válidos tras sanitización.'
+        );
       }
 
-      const numTarget = Number(targetAmount);
-      if (isNaN(numTarget) || numTarget <= 0) {
-        throw new InvalidAmountException('La meta de ahorro (targetAmount) debe ser mayor a 0.');
+      const numTarget = typeof targetAmount === 'number' ? targetAmount : Number(targetAmount);
+      if (!isPositiveFiniteNumber(numTarget)) {
+        throw new InvalidAmountException(
+          'La meta de ahorro (targetAmount) debe ser un número finito estrictamente mayor a 0.'
+        );
       }
 
       const created = await this.createPocketUseCase.execute({
-        name: name.trim(),
+        name: sanitizedName,
         targetAmount: numTarget,
       });
 
@@ -60,16 +70,17 @@ export class PocketController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { id } = req.params;
-      const { amount } = req.body ?? {};
-
-      const numAmount = Number(amount);
-      if (isNaN(numAmount) || numAmount <= 0) {
-        throw new InvalidAmountException('El monto a abonar debe ser mayor a 0.');
-      }
-
       const rawId = req.params.id;
-      const pocketId = Array.isArray(rawId) ? rawId[0] : rawId;
+      const pocketId = sanitizeString(Array.isArray(rawId) ? rawId[0] : (rawId ?? ''));
+
+      const { amount } = req.body ?? {};
+      const numAmount = typeof amount === 'number' ? amount : Number(amount);
+
+      if (!isPositiveFiniteNumber(numAmount)) {
+        throw new InvalidAmountException(
+          'El monto del abono debe ser un número finito estrictamente mayor a 0.'
+        );
+      }
 
       const updated = await this.depositFundsUseCase.execute({
         pocketId,
