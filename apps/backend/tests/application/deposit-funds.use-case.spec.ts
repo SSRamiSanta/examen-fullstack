@@ -4,7 +4,7 @@ import {
   InvalidAmountException,
   PocketCompletedException,
   PocketGoalExceededException,
-} from '@examen-fullstack/core';
+} from '../../src/domain';
 import { IPocketRepository, IEventPublisher } from '../../src/ports';
 import { DepositFundsUseCase } from '../../src/application/use-cases/deposit-funds.use-case';
 

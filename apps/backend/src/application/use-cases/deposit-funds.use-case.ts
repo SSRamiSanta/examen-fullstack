@@ -4,7 +4,7 @@ import {
   DepositEntity,
   PocketNotFoundException,
   InvalidAmountException,
-} from '@examen-fullstack/core';
+} from '../../domain';
 import { IPocketRepository, IEventPublisher } from '../../ports';
 
 export interface DepositFundsInput {

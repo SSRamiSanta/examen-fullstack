@@ -1,5 +1,6 @@
 import http from 'http';
-import { InMemoryPocketRepository } from './persistence/in-memory-pocket.repository';
+import path from 'path';
+import { SqlitePocketRepository, createSqliteDatabase } from './persistence';
 import { WebSocketEventPublisher } from './realtime/websocket.event-publisher';
 import {
   GetPocketsUseCase,
@@ -8,8 +9,13 @@ import {
 } from '../application';
 import { createExpressApp } from './http/app';
 
-export function bootstrapServer(port: number = Number(process.env.PORT) || 3000, host: string = '127.0.0.1') {
-  const repository = new InMemoryPocketRepository();
+export function bootstrapServer(
+  port: number = Number(process.env.PORT) || 3000,
+  host: string = '127.0.0.1',
+  dbPath: string = process.env.DATABASE_PATH || path.join(process.cwd(), 'data', 'pockets.db')
+) {
+  const db = createSqliteDatabase(dbPath);
+  const repository = new SqlitePocketRepository(db);
   const eventPublisher = new WebSocketEventPublisher();
 
   const getPocketsUseCase = new GetPocketsUseCase(repository);
@@ -32,7 +38,7 @@ export function bootstrapServer(port: number = Number(process.env.PORT) || 3000,
     start: () =>
       new Promise<void>((resolve) => {
         server.listen(port, host, () => {
-          console.info(`[Backend Infra] HTTP API & WS Server running on http://${host}:${port}`);
+          console.info(`[Backend Infra] HTTP API & WS Server running on http://${host}:${port} (SQLite: ${dbPath})`);
           resolve();
         });
       }),

@@ -9,7 +9,7 @@ import {
   InvalidPocketNameException,
   sanitizeString,
   isPositiveFiniteNumber,
-} from '@examen-fullstack/core';
+} from '../../../domain';
 
 export class PocketController {
   constructor(

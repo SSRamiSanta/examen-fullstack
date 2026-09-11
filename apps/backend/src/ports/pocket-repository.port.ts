@@ -1,4 +1,4 @@
-import { PocketEntity, DepositEntity } from '@examen-fullstack/core';
+import { PocketEntity, DepositEntity } from '../domain';
 
 /**
  * Puerto de salida para persistencia en apps/backend.

@@ -3,7 +3,7 @@ import { CreatePocketUseCase } from '../../src/application/use-cases/create-pock
 import {
   InvalidPocketNameException,
   InvalidAmountException,
-} from '@examen-fullstack/core';
+} from '../../src/domain';
 
 describe('CreatePocketUseCase (Application Use Case - Backend)', () => {
   let pocketRepoMock: jest.Mocked<IPocketRepository>;

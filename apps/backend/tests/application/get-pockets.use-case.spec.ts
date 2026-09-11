@@ -1,4 +1,4 @@
-import { PocketEntity } from '@examen-fullstack/core';
+import { PocketEntity } from '../../src/domain';
 import { IPocketRepository } from '../../src/ports';
 import { GetPocketsUseCase } from '../../src/application/use-cases/get-pockets.use-case';
 

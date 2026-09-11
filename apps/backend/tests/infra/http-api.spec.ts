@@ -8,6 +8,7 @@ import {
   DepositFundsUseCase,
   GetPocketsUseCase,
 } from '../../src/application';
+import { computeHmacSha256 } from '../../src/domain';
 
 describe('HTTP API Endpoints (Express Infra Adapter)', () => {
   let app: Express;
@@ -258,7 +259,6 @@ describe('HTTP API Endpoints (Express Infra Adapter)', () => {
     });
 
     it('debe procesar exitosamente si la firma HMAC-SHA256 y timestamp son válidos', async () => {
-      const { computeHmacSha256 } = await import('@examen-fullstack/core');
       const now = Date.now();
       const nonce = 'test-nonce-123';
       const body = { name: 'Ahorro Seguro', targetAmount: 2000 };

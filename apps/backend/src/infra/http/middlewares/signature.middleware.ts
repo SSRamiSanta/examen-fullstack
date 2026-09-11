@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyHmacSha256, validateTimestamp } from '@examen-fullstack/core';
+import { verifyHmacSha256, validateTimestamp } from '../../../domain';
 
 export const DEFAULT_SIGNATURE_SECRET =
   process.env.SIGNATURE_SECRET || 'examen-fullstack-secret-key-2026';

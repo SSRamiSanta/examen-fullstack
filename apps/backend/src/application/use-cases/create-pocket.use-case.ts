@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { Pocket, CreatePocketDTO } from '@examen-fullstack/shared';
-import { PocketEntity } from '@examen-fullstack/core';
+import { PocketEntity } from '../../domain';
 import { IPocketRepository } from '../../ports';
 
 export class CreatePocketUseCase {

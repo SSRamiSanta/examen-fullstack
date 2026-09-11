@@ -6,7 +6,7 @@ import {
   PocketNotFoundException,
   PocketGoalExceededException,
   PocketCompletedException,
-} from '@examen-fullstack/core';
+} from '../../../domain';
 import { ApiErrorResponse } from '@examen-fullstack/shared';
 
 export function errorMiddleware(
