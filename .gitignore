@@ -1,2 +1,8 @@
 node_modules
 .agent
+
+
+data/
+*.db
+*.db-wal
+*.db-shm

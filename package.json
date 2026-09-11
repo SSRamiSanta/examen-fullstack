@@ -7,15 +7,38 @@
     "apps/*"
   ],
   "scripts": {
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "dev:backend": "ts-node apps/backend/src/infra/server.ts",
+    "dev:frontend": "npm run dev --workspace=@examen-fullstack/frontend",
+    "build": "npm run build --workspace=@examen-fullstack/frontend",
+    "db": "node scripts/db-viewer.js"
   },
   "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "ws": "^8.21.3",
     "zod": "^4.6.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/supertest": "^7.2.1",
+    "@types/ws": "^8.18.1",
+    "@vitejs/plugin-react": "^4.7.0",
     "jest": "^30.5.1",
+    "jest-environment-jsdom": "^30.5.1",
+    "supertest": "^7.2.2",
     "ts-jest": "^29.4.12",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "vite": "^6.4.3"
   }
 }
