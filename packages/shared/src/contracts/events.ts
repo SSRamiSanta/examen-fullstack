@@ -20,4 +20,12 @@ export interface GoalReachedDomainEvent {
   reachedAt: string;
 }
 
-export type WebSocketEvent = PocketUpdatedEvent;
+export interface SecureEnvelope<T> {
+  payload: T;
+  timestamp: number;
+  nonce: string;
+  signature: string;
+}
+
+export type WebSocketEvent = PocketUpdatedEvent | SecureEnvelope<PocketUpdatedEvent>;
+
